@@ -25,6 +25,7 @@ class AssistantUI:
         
         # Dictionary to store assistant names and IDs
         self.assistants = {
+            "FINAS_TSUKI": "asst_O0ZtDGALy1XjwLknZfyCuzCU",
             "BARONIA_B": "asst_Qmoz7GL0UQRGnTpSvHUh1jrE",
             "FACE_OF_MALAYSIA": "asst_tzadLKlr6MmeXffh2n1yWZuX", 
             "MENJUNJUNG_KASIH": "asst_xxf55F2JbdteRsGw5m46FzUC", 
@@ -183,6 +184,49 @@ class AssistantUI:
             st.session_state.thread_id = thread.id
         return st.session_state.thread_id
 
+    def convert_timestamp_to_deciseconds(self, timestamp_str):
+        """Convert HH:MM:SS timestamp to deciseconds"""
+        try:
+            # Handle different timestamp formats
+            if ":" in timestamp_str:
+                parts = timestamp_str.split(":")
+                if len(parts) == 3:  # HH:MM:SS
+                    h, m, s = map(float, parts)
+                    total_seconds = h * 3600 + m * 60 + s
+                elif len(parts) == 2:  # MM:SS
+                    m, s = map(float, parts)
+                    total_seconds = m * 60 + s
+                else:
+                    return None
+                return int(total_seconds) 
+            return None
+        except:
+            return None
+
+    def create_timestamp_link(self, match, file_id):
+        """Create clickable link for timestamp"""
+        timestamp = match.group(0)
+        deciseconds = self.convert_timestamp_to_deciseconds(timestamp)
+        if deciseconds is not None:
+            return f'<a href="https://finas.ortana.tv/Clips/View?FleId={file_id}&offset={deciseconds}" target="_blank">{timestamp}</a>'
+        return timestamp
+
+    def process_message_content(self, content, file_id):
+        """Process message content to add timestamp links"""
+        import re
+        
+        # Pattern to match timestamps (both HH:MM:SS and MM:SS formats)
+        timestamp_pattern = r'\d{1,2}:\d{2}:\d{2}|\d{1,2}:\d{2}'
+        
+        # Replace timestamps with clickable links
+        processed_content = re.sub(
+            timestamp_pattern,
+            lambda m: self.create_timestamp_link(m, file_id),
+            content
+        )
+        
+        return processed_content
+
     def run(self):
         # Set page config and title
         st.set_page_config(page_title="BlacX x FINAS Assistant", layout="centered")
@@ -273,6 +317,7 @@ class AssistantUI:
 
         # Display assistant description
         assistant_descriptions = {
+            "FINAS_TSUKI": "All FINAS videos processed by Tsuki", 
             "BARONIA_B": "https://f001.backblazeb2.com/file/KioskOrtanaProxy/CACA2CC9-E851-469B-851B-0FFE78D90A45.MP4",
             "FACE_OF_MALAYSIA": "https://f001.backblazeb2.com/file/KioskOrtanaProxy/6C985F9C-8729-4A5F-A661-5F16E32F7EB0.MP4",
             "MENJUNJUNG_KASIH": "https://f001.backblazeb2.com/file/KioskOrtanaProxy/A5118C34-0CC0-46FD-901D-FD3D2587BFC9.MP4"
@@ -368,18 +413,32 @@ class AssistantUI:
                         thread_id=thread_id
                     )
                     
+                    # Get file_id based on selected assistant
+                    file_ids = {
+                        "BARONIA_B": "855112",
+                        "FACE_OF_MALAYSIA": "846082",
+                        "MENJUNJUNG_KASIH": "846083"
+                    }
+                    file_id = file_ids.get(selected_assistant_name)
+                    
                     # Display conversation history
                     st.markdown("### Conversation:")
                     for msg in messages.data:
                         role = "🧑" if msg.role == "user" else "🤖"
                         for content in msg.content:
                             if content.type == 'text':
+                                # Process content to add timestamp links
+                                processed_content = self.process_message_content(
+                                    content.text.value,
+                                    file_id
+                                )
+                                
                                 st.markdown(f"""
                                 <div style='background-color:{"#f0f2f6" if msg.role == "user" else "#f8f9fa"}; 
                                          padding:20px; 
                                          border-radius:10px;
                                          margin: 5px 0;'>
-                                    <strong>{role}</strong>: {content.text.value}
+                                    <strong>{role}</strong>: {processed_content}
                                 </div>
                                 """, unsafe_allow_html=True)
                     
