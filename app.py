@@ -317,7 +317,7 @@ class AssistantUI:
 
         # Display assistant description
         assistant_descriptions = {
-            "FINAS_TSUKI": "All FINAS videos processed by Tsuki", 
+            # "FINAS_TSUKI": "All FINAS videos processed by Tsuki", 
             "BARONIA_B": "https://f001.backblazeb2.com/file/KioskOrtanaProxy/CACA2CC9-E851-469B-851B-0FFE78D90A45.MP4",
             "FACE_OF_MALAYSIA": "https://f001.backblazeb2.com/file/KioskOrtanaProxy/6C985F9C-8729-4A5F-A661-5F16E32F7EB0.MP4",
             "MENJUNJUNG_KASIH": "https://f001.backblazeb2.com/file/KioskOrtanaProxy/A5118C34-0CC0-46FD-901D-FD3D2587BFC9.MP4"
