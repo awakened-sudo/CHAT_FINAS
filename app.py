@@ -25,7 +25,7 @@ class AssistantUI:
         
         # Dictionary to store assistant names and IDs
         self.assistants = {
-            "FINAS_TSUKI": "asst_O0ZtDGALy1XjwLknZfyCuzCU",
+            # "FINAS_TSUKI": "asst_O0ZtDGALy1XjwLknZfyCuzCU",
             "BARONIA_B": "asst_Qmoz7GL0UQRGnTpSvHUh1jrE",
             "FACE_OF_MALAYSIA": "asst_tzadLKlr6MmeXffh2n1yWZuX", 
             "MENJUNJUNG_KASIH": "asst_xxf55F2JbdteRsGw5m46FzUC", 
