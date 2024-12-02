@@ -100,7 +100,7 @@ class AssistantUI:
                 "suggested_questions": "பரிந்துரைக்கப்பட்ட கேள்விகள்",
                 "suggestions": [
                     "நாயகன் எதிரியை சந்திக்கும் காட்சியைக் காட்டுங்கள்?",
-                    "எந்த காட்சியில் சோகமான தருணம் உள்ளது?",
+                    "எந்த காட்சியல் சோகமான தருணம் உள்ளது?",
                     "வீடியோவின் சுருக்கம் என்ன?",
                     "எந்த காட்சி படத்தின் நடுப்பகுதியில் உள்ளது?"
                 ],
@@ -169,7 +169,7 @@ class AssistantUI:
                 "காட்சி மாற்றங்களையும் கதை சொல்லலில் அவற்றின் தாக்கத்தையும் ஆராயுங்கள்",
                 "மனநிலையை வெளிப்படுத்த ஒளி மற்றும் வண்ணம் பயன்படுத்தப்படும் விதத்தை ஆராயுங்கள்",
                 "கேமரா அசைவுகள் மற்றும் அவற்றின் விவரிப்பு முக்கியத்துவத்தை பகுப்பாய்வு செய்யவும்",
-                "உரையாடல் மற்றும் செயலின் வேகம் மற்றும் ரித்தத்தை பகுப்பாய்வு செய்யவும்",
+                "உரையாடல் மற்றும் செயலின் வேகம் ம்ும் ரித்தத்தை பகுப்பாய்வு செய்யவும்",
                 "இந்த வரிசையில் உள்ள சின்னங்கள் மற்றும் காட்சி உருவகங்களை கண்டறியவும்",
                 "இந்த காட்சியில் கதாபாத்திர இயக்கவியல் மற்றும் உறவுகளை ஆராயவும்"
             ]
@@ -198,25 +198,27 @@ class AssistantUI:
                     total_seconds = m * 60 + s
                 else:
                     return None
-                return int(total_seconds) 
+                # Convert to deciseconds for more precise timing
+                return int(total_seconds * 10)  # Multiply by 10 for deciseconds
             return None
         except:
             return None
 
     def create_timestamp_link(self, match, file_id):
-        """Create clickable link for timestamp"""
+        """Create clickable link for timestamp with decisecond precision"""
         timestamp = match.group(0)
         deciseconds = self.convert_timestamp_to_deciseconds(timestamp)
         if deciseconds is not None:
-            return f'<a href="https://finas.ortana.tv/Clips/View?FleId={file_id}&offset={deciseconds}" target="_blank">{timestamp}</a>'
+            # Add decisecond precision to URL
+            return f'<a href="https://finas.ortana.tv/Clips/View?FleId={file_id}&offset={deciseconds/10}" target="_blank">{timestamp}</a>'
         return timestamp
 
     def process_message_content(self, content, file_id):
         """Process message content to add timestamp links"""
         import re
         
-        # Pattern to match timestamps (both HH:MM:SS and MM:SS formats)
-        timestamp_pattern = r'\d{1,2}:\d{2}:\d{2}|\d{1,2}:\d{2}'
+        # Enhanced pattern to match more timestamp formats
+        timestamp_pattern = r'\b\d{1,2}:\d{2}(:\d{2})?(\.\d{1,3})?\b'
         
         # Replace timestamps with clickable links
         processed_content = re.sub(
@@ -309,15 +311,55 @@ class AssistantUI:
 
         # Add assistant selector with description
         st.markdown("<div class='assistant-selector'>", unsafe_allow_html=True)
+
+        # Define assistant IDs and their corresponding vector stores
+        assistant_vector_stores = {
+            "BARONIA_B": "vs_SbBbS2hVY0NMwpAp3IYHASpb",
+            "FACE_OF_MALAYSIA": "vs_xRhPCdDkF8k3MF37rGreAI1I", 
+            "MENJUNJUNG_KASIH": "vs_koy1fEQgl5ZIBRdrVx2mrR20"
+        }
+
+        # Initialize session state for tracking assistant changes
+        if "current_assistant" not in st.session_state:
+            st.session_state.current_assistant = list(self.assistants.keys())[0]
+            st.session_state.current_vector_store = assistant_vector_stores[st.session_state.current_assistant]
+
+        def switch_assistant():
+            # Update assistant and vector store IDs
+            st.session_state.current_assistant = selected_assistant_name
+            st.session_state.current_vector_store = assistant_vector_stores[selected_assistant_name]
+            
+            # Log the changes using os.write for console output
+            import os
+            os.write(1, f"\nSwitching Assistant:".encode())
+            os.write(1, f"\nAssistant ID: {self.assistants[selected_assistant_name]}".encode())
+            os.write(1, f"\nVector Store ID: {assistant_vector_stores[selected_assistant_name]}\n".encode())
+            
+            # Clear conversation state
+            st.session_state.thread_id = None
+            st.session_state.conversation_active = False
+
+        # Add assistant selector
         selected_assistant_name = st.selectbox(
             self.get_text("select_assistant", selected_language),
             list(self.assistants.keys()),
-            format_func=lambda x: f"🤖 {x}",  # Add emoji to make it more visual
+            format_func=lambda x: f"🤖 {x}",
+            key="assistant_selector"
         )
 
-        # Display assistant description
+        # Add switch button with callback
+        if st.button("Switch Assistant", 
+                    on_click=switch_assistant,
+                    type="primary"):
+            # The callback function will handle the state updates
+            st.rerun()
+
+        # Update the assistant ID and vector store ID from session state
+        self.ASSISTANT_ID = self.assistants[st.session_state.current_assistant]
+        self.VECTOR_STORE_ID = st.session_state.current_vector_store
+
+        # Update assistant description display
         assistant_descriptions = {
-            # "FINAS_TSUKI": "All FINAS videos processed by Tsuki", 
             "BARONIA_B": "https://f001.backblazeb2.com/file/KioskOrtanaProxy/CACA2CC9-E851-469B-851B-0FFE78D90A45.MP4",
             "FACE_OF_MALAYSIA": "https://f001.backblazeb2.com/file/KioskOrtanaProxy/6C985F9C-8729-4A5F-A661-5F16E32F7EB0.MP4",
             "MENJUNJUNG_KASIH": "https://f001.backblazeb2.com/file/KioskOrtanaProxy/A5118C34-0CC0-46FD-901D-FD3D2587BFC9.MP4"
@@ -393,7 +435,8 @@ class AssistantUI:
                     # Create and run assistant
                     run = self.client.beta.threads.runs.create(
                         thread_id=thread_id,
-                        assistant_id=self.ASSISTANT_ID
+                        assistant_id=self.ASSISTANT_ID,
+                        additional_instructions=f"Use vector store {assistant_vector_stores[selected_assistant_name]} for {selected_assistant_name}"
                     )
                     
                     # Wait for completion
