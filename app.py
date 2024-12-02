@@ -40,9 +40,9 @@ class AssistantUI:
                 "suggested_questions": "Suggested Questions",
                 "suggestions": [
                     "Show me the scene where the protagonist meets the antagonist?",
-                    "Which scene has a sad moment?",
+                    "Which scene has a happy moment?",
                     "What are the summary of the video?",
-                    "Which scene is at the midpoint of the movie?"
+                    "What can we learn from this video?"
                 ],
                 "processing": "Processing your query...",
                 "select_assistant": "Select Assistant",
@@ -55,9 +55,9 @@ class AssistantUI:
                 "suggested_questions": "Soalan Dicadangkan",
                 "suggestions": [
                     "Tunjukkan babak di mana protagonis bertemu antagonis?",
-                    "Babak manakah yang mempunyai momen sedih?",
+                    "Babak manakah yang mempunyai momen gembira?",
                     "Apakah ringkasan video ini?",
-                    "Babak manakah yang berada di pertengahan filem?"
+                    "Apakah yang kita boleh pelajari dari video ini?"
                 ],
                 "processing": "Memproses pertanyaan anda...",
                 "select_assistant": "Pilih Pembantu",
@@ -70,9 +70,9 @@ class AssistantUI:
                 "suggested_questions": "الأسئلة المقترحة",
                 "suggestions": [
                     "أرني المشهد حيث يلتقي البطل مع الخصم؟",
-                    "أي مشهد فيه لحظة حزينة؟",
+                    "أي مشهد فيه لحظة سعيدة؟",
                     "ما هو ملخص الفيديو؟",
-                    "أي مشهد في منتصف الفيلم؟"
+                    "ماذا يمكننا أن نتعلم من هذا الفيديو؟"
                 ],
                 "processing": "...جاري معالجة استفسارك",
                 "select_assistant": "اختر مساعد",
@@ -85,9 +85,9 @@ class AssistantUI:
                 "suggested_questions": "建议问题",
                 "suggestions": [
                     "显示主角与反派相遇的场景？",
-                    "哪个场景有悲伤的时刻？",
+                    "哪个场景有快乐的时刻？",
                     "视频的摘要是什么？",
-                    "哪个场景在电影的中点？"
+                    "我们可以从这个视频中学到什么？"
                 ],
                 "processing": "正在处理您的查询...",
                 "select_assistant": "选择助手",
@@ -100,9 +100,9 @@ class AssistantUI:
                 "suggested_questions": "பரிந்துரைக்கப்பட்ட கேள்விகள்",
                 "suggestions": [
                     "நாயகன் எதிரியை சந்திக்கும் காட்சியைக் காட்டுங்கள்?",
-                    "எந்த காட்சியல் சோகமான தருணம் உள்ளது?",
+                    "எந்த காட்சியில் மகிழ்ச்சியான தருணம் உள்ளது?",
                     "வீடியோவின் சுருக்கம் என்ன?",
-                    "எந்த காட்சி படத்தின் நடுப்பகுதியில் உள்ளது?"
+                    "இந்த வீடியோவிலிருந்து நாம் என்ன கற்றுக்கொள்ளலாம்?"
                 ],
                 "processing": "உங்கள் கேள்வியை செயலாக்குகிறது...",
                 "select_assistant": "உதவியாளரை தேர்ந்தெடுக்கவும்",
